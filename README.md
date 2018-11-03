@@ -1,7 +1,7 @@
 # ansible-elasticsearchCluster
-For this use case, we will use Vagrant and AWS to build a Local/Development and Production setup of an ElasticSearch cluster with 5 nodes for HA distributed across multiple regions.
+For this use case, we will use Vagrant to build a Local or Development elasticsearch cluster and AWS to build a Production-like setup of an ElasticSearch cluster with 5 nodes for HA distributed across multiple regions.
 
-The deployment will use Docker microservice infra to deploy elasticsearch and orchestrattion will be achieved using Kubernetes.
+The deployment will use Docker microservice infra to deploy elasticsearch and orchestration will be achieved using Kubernetes.
 
 Kibana will be used for Visualization. 
 
