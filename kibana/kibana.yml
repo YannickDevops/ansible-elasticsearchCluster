@@ -1,0 +1,9 @@
+server.name: "my-kibana"
+server.host: "kibana.local"
+server.ssl.enabled: true
+server.ssl.certificate: certs/kibana.crt
+server.ssl.key: config/certs/new.cert.key
+elasticsearch.url: "https://ec2-35-180-158-38.eu-west-3.compute.amazonaws.com:9200"
+elasticsearch.username: "kibana"
+elasticsearch.password: "kibana"
+elasticsearch.ssl.certificateAuthorities: [ "certs/kibana.crt" ]

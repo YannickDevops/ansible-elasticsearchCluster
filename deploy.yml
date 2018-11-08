@@ -1,0 +1,83 @@
+---
+- name: Installing ES cluster
+  hosts: all
+  become: yes
+  become_user: root
+  gather_facts: no
+  tasks:
+
+    - name: Disable vm swappiness
+      sysctl:
+        name: vm.swappiness
+        value: 0
+        state: present
+
+    - name: Configuring the vm.max_map_count
+      sysctl:
+        name: vm.max_map_count
+        value: 262144
+        state: present
+
+    - name: Copying ES configuration files on host machine
+      template:
+        src: files/elasticsearch-vagrant.yml
+        dest: /data/elasticsearch/elasticsearch.yml
+
+    - name: Configuring the master node with ES, Logstash and Kibana. THIS MIGHT TAKE A WHILE...
+      docker_container:
+        name: "master_node"
+        image: sebp/elk
+        networks:
+          - name: "es_network"
+        ports:
+          - 80:5601
+          - 9200:9200
+          - 9300:9300
+          - 5044:5044
+        ulimits: nofile:65536:65536
+        env:
+          LOGSTASH_START: 0
+          ELASTICSEARCH_START: 1
+          KIBANA_START: 1
+
+    - name: Copying configuration files to containers
+      command: "docker cp /data/elasticsearch/elasticsearch.yml master_node:/etc/elasticsearch/elasticsearch.yml"
+
+    - name: Restarting Elasticsearch
+      docker_container:
+        name: "master_node"
+        command: "service elasticsearch restart"
+
+
+    - name: Configuring 3 worker nodes with ES and Logstash
+      docker_container:
+        name: "{{item}}"
+        image: sebp/elk
+        networks:
+          - name: "es_network"
+        published_ports: all
+        ulimits: nofile:65536:65536
+        env:
+          LOGSTASH_START: 1
+          ELASTICSEARCH_START: 1
+          KIBANA_START: 0
+      loop:
+        - node1
+        - node2
+        - node3
+
+    - name: Copying configuration files to containers
+      command: "docker cp /data/elasticsearch/elasticsearch.yml {{item}}:/etc/elasticsearch/elasticsearch.yml"
+      loop:
+        - node1
+        - node2
+        - node3
+
+    - name: Restarting Elasticsearch
+      docker_container:
+        name: "{{ item }}"
+        command: "service elasticsearch restart"
+      loop:
+        - node1
+        - node2
+        - node3

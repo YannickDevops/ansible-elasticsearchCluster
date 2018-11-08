@@ -1,0 +1,6 @@
+---
+- name: Installing Kubernetes on target machine
+  hosts: aws
+  tasks:
+
+    - name:

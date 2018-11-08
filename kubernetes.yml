@@ -1,0 +1,11 @@
+---
+- name: Create a Deployment from running servers
+  hosts: aws
+  become: yes
+  become_user: root
+  tasks:
+
+    - name: Create ELK deployment
+      k8s:
+        state: present
+        src: /kubernetes/deployment.yml

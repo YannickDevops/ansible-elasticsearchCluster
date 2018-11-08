@@ -1,0 +1,24 @@
+---
+- name: Deployment of ElasticSearch and Kibana on Vagrant
+  hosts: "{{ ansible_default_ipv4.address }}"
+  tasks:
+
+    - name: Installing docker on host
+      yum:
+        name: docker
+        state: installed
+
+    - name: Installing docker-py
+      yum:
+        name: docker-py
+        state: installed
+
+    - name: Ensure docker is running
+      service:
+        name: docker
+        state: running
+        enabled: yes
+
+    - name: Creating docker network for ES cluster
+      docker_network:
+        
