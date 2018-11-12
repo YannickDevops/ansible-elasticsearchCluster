@@ -1,3 +1,0 @@
----
-- name: Install the required packages in Debian derivatives
-  apt: name=ntp update_cache=yes

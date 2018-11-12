@@ -1,0 +1,27 @@
+---
+- name: Building Docker test in Python for ES
+  hosts: aws
+  become: yes
+  become_user: root
+  vars:
+    version: v2
+  tasks:
+
+    - name: Copying configuration to target
+      copy:
+        src: ../python-docker-test/
+        dest: /tmp/
+        mode: '777'
+
+    - name: Build image
+      docker_image:
+        path: /tmp
+        name: python-test
+        tag: "{{ version }}"
+
+    - name: Run Python test script from Docker
+      docker_container:
+        name: python-test
+        image: python-test:{{ version }}
+
+

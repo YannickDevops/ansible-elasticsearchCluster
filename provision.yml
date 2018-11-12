@@ -1,24 +1,65 @@
 ---
 - name: Deployment of ElasticSearch and Kibana on Vagrant
-  hosts: "{{ ansible_default_ipv4.address }}"
+  hosts: all
+  become: yes
+  become_user: root
   tasks:
+
+    - name: Upgrading OS
+      yum:
+        name: '*'
+        state: latest
 
     - name: Installing docker on host
       yum:
         name: docker
         state: installed
 
+    - name: Downloading Pip
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        dest: /tmp/get-pip.py
+
+    - name: Installing pip
+      shell: python /tmp/get-pip.py
+
     - name: Installing docker-py
-      yum:
+      pip:
         name: docker-py
-        state: installed
+        state: latest
 
     - name: Ensure docker is running
       service:
         name: docker
-        state: running
+        state: started
         enabled: yes
 
     - name: Creating docker network for ES cluster
       docker_network:
-        
+        name: es_network
+
+    - name: Creating directory for configuration
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '777'
+      loop:
+        - /data
+        - /data/elasticsearch
+
+    - name: Removing dependencies
+      yum:
+        name: PyYAML
+        state: absent
+
+    - name: Removing ipaddress
+      yum:
+        name: ipaddress
+        state: absent
+
+
+
+#    - name: Install Openshift
+#      pip:
+#        name: openshift
+#        state: present

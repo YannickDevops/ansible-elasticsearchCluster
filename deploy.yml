@@ -1,9 +1,11 @@
 ---
 - name: Installing ES cluster
-  hosts: all
+  hosts: aws
   become: yes
   become_user: root
   gather_facts: no
+  vars:
+    - number_of_nodes: 3
   tasks:
 
     - name: Disable vm swappiness
@@ -18,10 +20,12 @@
         value: 262144
         state: present
 
-    - name: Copying ES configuration files on host machine
-      template:
-        src: files/elasticsearch-vagrant.yml
-        dest: /data/elasticsearch/elasticsearch.yml
+    - name: Copying ES configuration file onto target
+      copy:
+        src: elasticsearch/
+        dest: /data/elasticsearch/
+        mode: '777'
+
 
     - name: Configuring the master node with ES, Logstash and Kibana. THIS MIGHT TAKE A WHILE...
       docker_container:
@@ -30,7 +34,7 @@
         networks:
           - name: "es_network"
         ports:
-          - 80:5601
+          - 5601:5601
           - 9200:9200
           - 9300:9300
           - 5044:5044
@@ -39,19 +43,14 @@
           LOGSTASH_START: 0
           ELASTICSEARCH_START: 1
           KIBANA_START: 1
-
-    - name: Copying configuration files to containers
-      command: "docker cp /data/elasticsearch/elasticsearch.yml master_node:/etc/elasticsearch/elasticsearch.yml"
-
-    - name: Restarting Elasticsearch
-      docker_container:
-        name: "master_node"
-        command: "service elasticsearch restart"
+          ES_CONNECT_RETRY: 300
+        volumes:
+          - /data/elasticsearch/:/etc/elasticsearch
 
 
     - name: Configuring 3 worker nodes with ES and Logstash
       docker_container:
-        name: "{{item}}"
+        name: "node{{item}}"
         image: sebp/elk
         networks:
           - name: "es_network"
@@ -61,23 +60,10 @@
           LOGSTASH_START: 1
           ELASTICSEARCH_START: 1
           KIBANA_START: 0
-      loop:
-        - node1
-        - node2
-        - node3
+          ES_CONNECT_RETRY: 300
+        volumes:
+          - /data/elasticsearch/:/etc/elasticsearch
+      with_sequence: count={{ number_of_nodes }}
 
-    - name: Copying configuration files to containers
-      command: "docker cp /data/elasticsearch/elasticsearch.yml {{item}}:/etc/elasticsearch/elasticsearch.yml"
-      loop:
-        - node1
-        - node2
-        - node3
 
-    - name: Restarting Elasticsearch
-      docker_container:
-        name: "{{ item }}"
-        command: "service elasticsearch restart"
-      loop:
-        - node1
-        - node2
-        - node3
+

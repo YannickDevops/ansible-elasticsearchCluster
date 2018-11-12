@@ -81,8 +81,7 @@ elasticsearch.ssl.certificateAuthorities: [ "certs/kibana.crt" ]
 
 ### Adding Kubernetes to orchestrate all my containers
 We will use Ansible to install Kubernetes and all its components (kubelet, kubectl, kubeadm and kubernetes-cni) 
-- The role of the node will act as both the master node and the worker node
-- 
+- The role of the node will act as both the master node and the worker node 
 
 Steps to install Kubernetes on Target hosts:
 1. Install role on AnsibleController: `ansible-galaxy install grycap.kubernetes -p ../roles`

@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk-deployment
+  labels:
+    app: elk
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: elk
+  template:
+    metadata:
+      labels:
+        app: elk
+    spec:
+      containers:
+      - name: elk-nodes
+        image: sebp/elk
+        ports:
+        - containerPort: 5601:5601
+        - containerPort: 9200:9200
+        - containerPort: 9300:9300

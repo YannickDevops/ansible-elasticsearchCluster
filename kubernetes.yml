@@ -5,7 +5,13 @@
   become_user: root
   tasks:
 
+    - name: Copying Deployments to directory
+      copy:
+        src: kubernetes/deployment.yml
+        dest: /tmp
+        mode: '777'
+
     - name: Create ELK deployment
       k8s:
         state: present
-        src: /kubernetes/deployment.yml
+        src: /tmp/deployment.yml

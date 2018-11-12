@@ -1,3 +1,0 @@
----
-- name: Install the required packages in Redhat derivatives
-  yum: name=ntp state={{ ntp_pkg_state }}

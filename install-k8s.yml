@@ -1,6 +1,27 @@
 ---
 - name: Installing Kubernetes on target machine
   hosts: aws
+  become: yes
+  become_user: root
   tasks:
 
-    - name:
+    - name: Enabling Repository
+      copy:
+        src: kubernetes/kubernetes.repo
+        dest: /etc/yum.repos.d/kubernetes.repo
+        mode: 777
+
+    - name: Installing Kubectl
+      yum:
+        name: kubectl
+        state: installed
+
+#    - name: Running Minikube
+#      command: "curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64 && chmod +x minikube && sudo cp minikube /usr/local/bin/ && rm minikube"
+#      get_url:
+#        url: https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64
+#        dest: /usr/local/bin/minikube
+#        mode: 777
+
+#    - name: Starting Minikube
+#      command: "/usr/local/bin/minikube start"
