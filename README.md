@@ -37,7 +37,7 @@ hosts: all
 number of nodes: <to whatever you want>
 
 ```
-4. Change the cluster name in ES configuration in `files/elasticsearch.yml` to `cluster.name: logging`
+4. Change the cluster name in ES configuration in `elasticsearch/elasticsearch.yml` to `cluster.name: logging`
 5. In inventories/hosts, insert your own hostname or fqdn
 6. Run: `ansible-playbook site.yml -u ec2-user`
 7. This will build an ElasticSearch Cluster completely dockerized and a Kibana dashboard for Visualization.
