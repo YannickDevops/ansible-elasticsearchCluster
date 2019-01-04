@@ -1,3 +1,3 @@
 FROM williamyeh/ansible:centos7
 
-RUN ansible --version
+RUN ansible-playbook --help
