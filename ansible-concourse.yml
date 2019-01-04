@@ -10,5 +10,5 @@ inputs:
   - name: ansible-stuff
 
 run:
-  path: ansible-playbook
-  args: [site.yml]
+  path: ls
+#  args: [site.yml]
