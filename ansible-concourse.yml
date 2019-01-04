@@ -6,9 +6,9 @@ image_resource:
   source:
     repository: khubah/ansible
 
-#inputs:
-#  - name: ansible-stuff
+inputs:
+  - name: ansible-stuff
 
 run:
-  path: ansible
-  args: [--version]
+  path: ansible-playbook
+  args: [site.yml]
